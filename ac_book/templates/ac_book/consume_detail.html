@@ -1,0 +1,13 @@
+{% extends 'ac_book/base.html' %}
+
+{% block content %}
+	<div class = "consume">
+		{% if consume.con_date %}
+			<div class = "date">
+				{{ consume.con_date }}
+			</div>
+		{% endif %}
+		<h1>{{ consume.store_name }}</h1>
+		<p>{{ consume.con_type }}</p>
+		<p>{{ consume.con_price }}</p>
+{% endblock content %}
