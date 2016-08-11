@@ -6,7 +6,7 @@
             <div class="date">
                 {{ consume.con_date }}
         	</div>
-            <h1><a href="">{{ consume.store_name }}</a></h1>
+            <h1><a href="{% url 'consume_detail' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
             <p>{{ consume.con_type }}</p>
             <p>{{ consume.con_price }}</p>
         </div>
