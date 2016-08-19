@@ -3,6 +3,7 @@
 {% block content %}
 	<div class = "consume">
 		<a class="btn btn-default" href="{% url 'consume_edit' pk=consume.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+		<a class="btn btn-default" href="{% url 'consume_remove' pk=consume.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
 		{% if consume.con_date %}
 			<div class = "date">
 				{{ consume.con_date }}
