@@ -31,6 +31,13 @@ def consume_edit(request, pk):
 			consume = form.save(commit=False)
 			consume.save()
 			return redirect('consume_detail', pk=consume.pk)
+			#return redirect('ac_book.views.consume_detail', pk=consume.pk)
 	else:
 		form = ConsumeForm(instance = consume)
 	return render(request, 'ac_book/consume_edit.html', {'form':form})
+
+def consume_remove(request, pk):
+    consume = get_object_or_404(Consume, pk=pk)
+    consume.delete()
+    #return redirect('ac_book.views.consume_list')
+    return redirect('consume_list')
