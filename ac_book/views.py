@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Consume
+from .models import Consume, MyUser
 from django.utils import timezone
-from .forms import ConsumeForm
+from .forms import ConsumeForm, UserForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
@@ -54,3 +54,20 @@ def consume_remove(request, pk):
 def logout_view(request):
 	logout(request)
 	# return redirect('/')
+
+def sign_up(request):
+		if request.method == "POST":
+			form = UserForm(request.POST)
+			if form.is_valid():
+				my_user = form.save(commit=False)
+				email = my_user.email
+				date_of_birth = my_user.date_of_birth
+				password = my_user.password
+				print("pasword = " + password)
+				user = MyUser.objects.create_user(email, date_of_birth, password)			
+				user.save()
+				return redirect('/')
+				#return redirect('ac_book.views.consume_detail', pk=consume.pk)
+		else:
+			form = UserForm()
+		return render(request, 'registration/sign_up.html', {'form':form})
