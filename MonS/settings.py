@@ -121,3 +121,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 AUTH_USER_MODEL = 'ac_book.MyUser'
+LOGIN_REDIRECT_URL = '/'
