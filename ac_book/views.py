@@ -20,6 +20,7 @@ def consume_new(request):
 		form = ConsumeForm(request.POST)
 		if form.is_valid():
 			consume = form.save(commit=False)
+			consume.user = request.user
 			consume.save()
 			return redirect('consume_detail', pk=consume.pk)
 	else:
@@ -33,6 +34,7 @@ def consume_edit(request, pk):
 		form = ConsumeForm(request.POST, instance = consume)
 		if form.is_valid():
 			consume = form.save(commit=False)
+			consume.user = request.user
 			consume.save()
 			return redirect('consume_detail', pk=consume.pk)
 			#return redirect('ac_book.views.consume_detail', pk=consume.pk)
