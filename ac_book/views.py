@@ -6,7 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 def consume_list(request):
-	consumes = Consume.objects.order_by('-con_date')
+	logged_in_user = request.user
+	consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
 	return render(request, 'ac_book/consume_list.html', {'consumes' : consumes})
 
 def consume_detail(request, pk):
