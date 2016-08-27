@@ -4,7 +4,8 @@
     {% for consume in consumes %}
         <div class="consume">
             <div class="date">
-                {{ consume.con_date }}
+                {{ consume.con_date | date:"D d M Y" }}
+                
         	</div>
             <h1><a href="{% url 'consume_detail' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
             <p>{{ consume.con_type }}</p>
