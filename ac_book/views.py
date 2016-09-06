@@ -82,7 +82,6 @@ def user_info(request):
 		return redirect('user_info')
 	else:
 		#request user_info views
-		print("aaaa")
 		form = UserForm(instance = user)
 	return render(request, 'registration/user_info.html', {'form':form})
 def user_del(request):
