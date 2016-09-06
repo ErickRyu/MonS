@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
 	url(r'^$', views.consume_list, name='consume_list'),
+	url(r'^consume/(?P<term_id>[0-9]{4}-[0-9]{2})/monthly/$', views.consume_monthly, name='consume_monthly'),
 	url(r'^consume/(?P<pk>[0-9]+)$', views.consume_detail, name='consume_detail'),
 	url(r'^consume/new/$', views.consume_new, name='consume_new'),
 	url(r'^consume/(?P<pk>[0-9]+)/edit/$', views.consume_edit, name = 'consume_edit'),

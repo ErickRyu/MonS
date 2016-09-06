@@ -4,11 +4,19 @@ from django.utils import timezone
 from .forms import ConsumeForm, UserForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+import datetime
+
 
 def consume_list(request):
 	logged_in_user = request.user
 	consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
 	return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
+
+def consume_monthly(request, term_id):
+	logged_in_user = request.user
+	consumes = Consume.objects.filter(con_date__contains=term_id, user_id=logged_in_user.id)
+	return render(request, 'ac_book/consume_monthly.html', {'consumes' : consumes})
+
 
 def consume_detail(request, pk):
 	consume = get_object_or_404(Consume, pk=pk)
