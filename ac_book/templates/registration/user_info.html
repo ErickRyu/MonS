@@ -1,0 +1,12 @@
+{% extends "ac_book/base.html" %}
+
+{% block content %}
+
+<h1>user info</h1>
+<p><B>ID : </B>{{user.email}}</p>
+<form method="POST" action='/registration/user_info/'>{% csrf_token %}
+	<p><B>DATE OF BIRTH : </B><input type="text" id="date_of_birth" name="date_of_birth" value = '{{ user.date_of_birth|date:"Y-m-d"}}' required /></p>
+<p><input id= "submit_btn" type= "submit"  value='회원정보 수정' />
+<input type="button" onclick= "window.location='/registration/user_del/';" value="탈퇴" /> 
+</form>
+{% endblock %}
