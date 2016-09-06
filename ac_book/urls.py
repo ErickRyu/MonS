@@ -9,5 +9,5 @@ urlpatterns = [
 	url(r'^post/(?P<pk>\d+)/remove/$', views.consume_remove, name='consume_remove'),
 	url(r'^registration/sign_up/$', views.sign_up, name='sign_up'),
 	url(r'^registration/user_info/$', views.user_info, name='user_info'),
-
+	url(r'^registration/user_del/$', views.user_del, name='user_del'),
 ]

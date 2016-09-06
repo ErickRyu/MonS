@@ -85,3 +85,7 @@ def user_info(request):
 		print("aaaa")
 		form = UserForm(instance = user)
 	return render(request, 'registration/user_info.html', {'form':form})
+def user_del(request):
+	user = get_object_or_404(MyUser, pk = request.user.pk)
+	user.delete()
+	return redirect('/')
