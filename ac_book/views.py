@@ -8,7 +8,7 @@ from django.contrib.auth import logout
 def consume_list(request):
 	logged_in_user = request.user
 	consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
-	return render(request, 'ac_book/consume_list.html', {'consumes' : consumes})
+	return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
 
 def consume_detail(request, pk):
 	consume = get_object_or_404(Consume, pk=pk)
@@ -71,3 +71,17 @@ def sign_up(request):
 		else:
 			form = UserForm()
 		return render(request, 'registration/sign_up.html', {'form':form})
+
+def user_info(request):
+	pk = request.user.pk
+	user = get_object_or_404(MyUser, pk = pk)
+	if request.method == "POST":
+		#edit user_info
+		user.date_of_birth = request.POST['date_of_birth']
+		user.save()
+		return redirect('user_info')
+	else:
+		#request user_info views
+		print("aaaa")
+		form = UserForm(instance = user)
+	return render(request, 'registration/user_info.html', {'form':form})

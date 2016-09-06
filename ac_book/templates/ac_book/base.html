@@ -5,6 +5,8 @@
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 		<link rel="stylesheet" href="{% static 'css/ac_book.css' %}">
+		<script src="http://code.jquery.com/jquery-latest.min.js">
+		</script>
 	</head>
 	<body>
 		<div class="page-header">
@@ -12,7 +14,7 @@
 	      <a href="{% url 'consume_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
 				<!-- <p class="top-menu">Hello {{ user.email }}<small>(<a href="{% url 'logout' %}">Log out</a>)</small></p> -->
 				<a href="{% url 'logout' %}"class = "top-menu"><sapn class="glyphicon glyphicon-log-out"></span></a>
-				<p style="font-size:140%" class = "top-menu">{{ user.email }}</p>
+				<p style="font-size:140%" class = "top-menu"><a href="{% url 'user_info' %}">{{ user.email }}</a></p>
       {% else %}
       	<p class = "top-menu"><a href="{% url 'sign_up' %}">Sign Up</a></p>
       	<a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-lock"></span></a>
