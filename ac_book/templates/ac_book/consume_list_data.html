@@ -72,15 +72,15 @@
     </div>
 
     <div id='consume_show_format' style='display:none;'>
-        <a class='list-group-item'>
+        <a href='consume/read/%consume_pk%' class='list-group-item'>
             <B>
-                <h1>%con_type%</h1><hr>
-                <p>%store_name%</p>
+                <h1>%store_name%</h1><hr>
+                <p>%con_type%</p>
                 <p>%con_date%</p>
                 <p>%con_price%</p>
                 
             </B>
-            <input type='hidden' id='consume_pk' value='%consume_pk%'>
+            <input type='hidden' id='consume_pk' value='%consume_pk%' />
         </a>
     </div>
 {% endblock content %}
