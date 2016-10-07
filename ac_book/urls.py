@@ -4,6 +4,9 @@ from django.contrib.auth import views as def_views
 
 urlpatterns = [
 	url(r'^$', views.consume_list, name='consume_list'),
+	url(r'^consume/list/$', views.consume_list_data, name='consume_list_data'),
+
+
 
 	#consume R
 	url(r'^consume/(?P<term_id>[0-9]{4}-[0-9]{2})/monthly/$', views.consume_monthly, name='consume_monthly'),

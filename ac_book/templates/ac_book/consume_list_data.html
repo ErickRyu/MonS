@@ -1,0 +1,86 @@
+{% extends 'ac_book/base.html' %}
+{% block content %}
+    <script>
+    var getCookie = function(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+
+    var renderItem = function(data){
+        /*
+        input
+            {
+                pk: 41,
+                fields: {
+                    con_type: c1,
+                    store_name: s1,
+                    con_date: 2016 - 10 - 07 T08: 46: 38 Z,
+                    con_price: 1111,
+                    user: 16
+                }
+            }
+        */
+        var format = $('div[id=consume_show_format]').html();
+        format = format.replace(/%con_type%/gi, data.fields.con_type);
+        format = format.replace(/%consume_pk%/gi, data.pk);
+        format = format.replace(/%store_name%/gi, data.fields.store_name);
+        format = format.replace(/%con_price%/gi, data.fields.con_price);
+        format = format.replace(/%con_date%/gi, data.fields.con_date);
+
+        $('div[id=consume_list]').append(format);
+    };
+
+    $(function(){
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url : '/consume/list/',
+            method : 'POST',
+            dataType: 'json',
+            beforeSend : function(xhr){
+                xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+            },
+            success : function(msg){
+                /*
+                render data into template
+                input
+                    {
+                        consumes : consume list
+                    }
+                */
+                var msg_data = JSON.parse(msg);
+                for(var i in msg_data){
+                    renderItem(msg_data[i]);
+                }
+            }
+        });
+    });
+    </script>
+
+
+    <div class="list-group" id = "consume_list">
+    </div>
+
+    <div id='consume_show_format' style='display:none;'>
+        <a class='list-group-item'>
+            <B>
+                <h1>%con_type%</h1><hr>
+                <p>%store_name%</p>
+                <p>%con_date%</p>
+                <p>%con_price%</p>
+                
+            </B>
+            <input type='hidden' id='consume_pk' value='%consume_pk%'>
+        </a>
+    </div>
+{% endblock content %}

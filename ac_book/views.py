@@ -4,13 +4,29 @@ from django.utils import timezone
 from .forms import ConsumeForm, UserForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.http import HttpResponse
 import datetime
+import json
+from django.core import serializers
 
 
+# main
+# template 뿌리는 놈
 def consume_list(request):
+	# logged_in_user = request.user
+	# consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
+	# return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
+	return render(request, 'ac_book/consume_list_data.html')
+
+# data 뿌리는 놈
+def consume_list_data(request):
 	logged_in_user = request.user
 	consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
-	return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
+
+	con_obj = serializers.serialize('json', consumes)
+	return HttpResponse(json.dumps(con_obj), content_type = "application/json")
+
+
 
 def consume_monthly(request, term_id):
 	logged_in_user = request.user
