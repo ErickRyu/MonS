@@ -11,7 +11,7 @@
 	<body>
 		<div class="page-header">
 			{% if user.is_authenticated %}
-	      <a href="{% url 'consume_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
+	      <a href="{% url 'consume_create' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
 				<!-- <p class="top-menu">Hello {{ user.email }}<small>(<a href="{% url 'logout' %}">Log out</a>)</small></p> -->
 				<a href="{% url 'logout' %}"class = "top-menu"><sapn class="glyphicon glyphicon-log-out"></span></a>
 				<p style="font-size:140%" class = "top-menu"><a href="{% url 'user_info' %}">{{ user.email }}</a></p>

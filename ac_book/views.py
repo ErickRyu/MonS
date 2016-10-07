@@ -17,27 +17,25 @@ def consume_monthly(request, term_id):
 	consumes = Consume.objects.filter(con_date__contains=term_id, user_id=logged_in_user.id)
 	return render(request, 'ac_book/consume_monthly.html', {'consumes' : consumes})
 
-
-def consume_detail(request, pk):
+def consume_read(request, pk):
 	consume = get_object_or_404(Consume, pk=pk)
-	return render(request, 'ac_book/consume_detail.html', {'consume':consume})
-
+	return render(request, 'ac_book/consume_read.html', {'consume':consume})
 
 @login_required
-def consume_new(request):
+def consume_create(request):
 	if request.method == "POST":
 		form = ConsumeForm(request.POST)
 		if form.is_valid():
 			consume = form.save(commit=False)
 			consume.user = request.user
 			consume.save()
-			return redirect('consume_detail', pk=consume.pk)
+			return redirect('consume_read', pk=consume.pk)
 	else:
 		form = ConsumeForm()
-	return render(request, 'ac_book/consume_edit.html', {'form':form})
+	return render(request, 'ac_book/consume_update.html', {'form':form})
 
 @login_required
-def consume_edit(request, pk):
+def consume_update(request, pk):
 	consume = get_object_or_404(Consume, pk = pk)
 	if request.method == "POST":
 		form = ConsumeForm(request.POST, instance = consume)
@@ -45,14 +43,13 @@ def consume_edit(request, pk):
 			consume = form.save(commit=False)
 			consume.user = request.user
 			consume.save()
-			return redirect('consume_detail', pk=consume.pk)
-			#return redirect('ac_book.views.consume_detail', pk=consume.pk)
+			return redirect('consume_read', pk=consume.pk)
 	else:
 		form = ConsumeForm(instance = consume)
-	return render(request, 'ac_book/consume_edit.html', {'form':form})
+	return render(request, 'ac_book/consume_update.html', {'form':form})
 
 @login_required
-def consume_remove(request, pk):
+def consume_delete(request, pk):
   consume = get_object_or_404(Consume, pk=pk)
   consume.delete()
   #return redirect('ac_book.views.consume_list')

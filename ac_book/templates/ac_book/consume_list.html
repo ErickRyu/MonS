@@ -14,7 +14,7 @@
             <div class = "date">{{ consume.con_date | date:"D d M Y" }}</div>
             {% endifchanged %}
             <div class="consume">
-                <h1><a href="{% url 'consume_detail' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
+                <h1><a href="{% url 'consume_read' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
                 <p>{{ consume.con_type }}</p>
                 <p>{{ consume.con_price }}</p>
            </div>
