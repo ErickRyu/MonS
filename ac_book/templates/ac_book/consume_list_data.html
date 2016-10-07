@@ -40,6 +40,10 @@
 
         $('div[id=consume_list]').append(format);
     };
+    var consumeOnClick = function(){
+        //modal test
+        $('#myModal').modal();
+    };
 
     $(function(){
         var csrftoken = getCookie('csrftoken');
@@ -72,15 +76,43 @@
     </div>
 
     <div id='consume_show_format' style='display:none;'>
-        <a href='consume/read/%consume_pk%' class='list-group-item'>
+        <a href='javascript:consumeOnClick();' class='list-group-item'>
             <B>
-                <h1>%store_name%</h1><hr>
-                <p>%con_type%</p>
-                <p>%con_date%</p>
-                <p>%con_price%</p>
-                
+                <div class="panel-group">
+                    <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
+                    <h1 class ='modal-title'>%store_name%</h1>
+                    </div>
+                    <div class='panel-body'>
+                        <p>%con_type%</p>
+                        <p>%con_date%</p>
+                        <p>%con_price%</p>
+                    </div>
+                </div>
             </B>
             <input type='hidden' id='consume_pk' value='%consume_pk%' />
         </a>
+    </div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <p>아: 아버지</p>
+            <p>나: 나를 낳으시고</p>
+            <p>바: 바지적삼</p>
+            <p>다: 다 적시셨네</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
     </div>
 {% endblock content %}

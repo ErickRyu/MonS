@@ -7,9 +7,10 @@
 		<link rel="stylesheet" href="{% static 'css/ac_book.css' %}">
 		<script src="http://code.jquery.com/jquery-latest.min.js">
 		</script>
+		<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'> </script>
 	</head>
 	<body>
-		<div class="page-header">
+		<div class="page-header" style='background-color:#000000;'>
 			{% if user.is_authenticated %}
 	      <a href="{% url 'consume_create' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
 				<!-- <p class="top-menu">Hello {{ user.email }}<small>(<a href="{% url 'logout' %}">Log out</a>)</small></p> -->
