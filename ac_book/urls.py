@@ -9,7 +9,7 @@ urlpatterns = [
 
 
 	#consume R
-	url(r'^consume/(?P<term_id>[0-9]{4}-[0-9]{2})/monthly/$', views.consume_monthly, name='consume_monthly'),
+	url(r'^consume/(?P<date_from>[0-9]{4}[0-9]{2})-(?P<date_to>[0-9]{4}[0-9]{2})/$', views.consume_term, name='consume_term'),
 
 	#consume C U D
 	url(r'^consume/read/(?P<pk>\d+)/$', views.consume_read, name='consume_read'),

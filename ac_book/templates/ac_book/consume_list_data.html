@@ -45,6 +45,19 @@
         $('#myModal').modal();
     };
 
+    var getConsumeWithTerm = function(start_date, end_date){
+        $.ajax({
+            url : 'consume/' + start_date + '-' + end_date,
+            method : 'GET',
+            success : function(msg){
+                var msg_data = JSON.parse(msg);
+                $('div[id=consume_list]').empty();
+                for(var i in msg_data)
+                    renderItem(msg_data[i]);
+            }
+        });
+    };
+
     $(function(){
         var csrftoken = getCookie('csrftoken');
         $.ajax({
@@ -69,9 +82,16 @@
             }
         });
     });
+
     </script>
 
 
+    <input type = "text" id = "from_date"> </input> ~ 
+    <input type = "text" id = "to_date"> </input>
+    <input type = "button" id = "term_submit" value = "Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val())" />
+
+
+    
     <div class="list-group" id = "consume_list">
     </div>
 
@@ -103,6 +123,7 @@
             <h4 class="modal-title">Modal Header</h4>
           </div>
           <div class="modal-body">
+            <p>오늘의 명언</p>
             <p>아: 아버지</p>
             <p>나: 나를 낳으시고</p>
             <p>바: 바지적삼</p>

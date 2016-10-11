@@ -27,11 +27,19 @@ def consume_list_data(request):
 	return HttpResponse(json.dumps(con_obj), content_type = "application/json")
 
 
-
-def consume_monthly(request, term_id):
+def consume_term(request, date_from, date_to):
 	logged_in_user = request.user
-	consumes = Consume.objects.filter(con_date__contains=term_id, user_id=logged_in_user.id)
-	return render(request, 'ac_book/consume_monthly.html', {'consumes' : consumes})
+	# python filter  첫 날짜, 끝 날짜를 찾아주는것이 있을 것이다.
+	# 받은 대로 출력
+	from_year = date_from[:4]
+	from_month =  date_from[4:6]
+	to_year = date_to[:4]
+	to_month = date_to[4:6]
+	consumes = Consume.objects.filter(con_date__year__lte=to_year, con_date__month__lte=to_month,  con_date__year__gte= from_year, con_date__month__gte=from_month, user_id=logged_in_user.id).order_by('-con_date')
+	
+	con_obj = serializers.serialize('json', consumes)
+	return HttpResponse(json.dumps(con_obj), content_type = "application/json")
+
 
 def consume_read(request, pk):
 	consume = get_object_or_404(Consume, pk=pk)
