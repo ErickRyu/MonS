@@ -36,26 +36,51 @@
         format = format.replace(/%consume_pk%/gi, data.pk);
         format = format.replace(/%store_name%/gi, data.fields.store_name);
         format = format.replace(/%con_price%/gi, data.fields.con_price);
-        format = format.replace(/%con_date%/gi, data.fields.con_date);
+        format = format.replace(/%con_date%/gi, dateFormat(data.fields.con_date, 'yyyy년 mm월 dd일, HH:MM'));
 
         $('div[id=consume_list]').append(format);
     };
-    var consumeOnClick = function(){
-        //modal test
-        $('#myModal').modal();
+
+    var renderItems = function(data){
+        $('div[id=consume_list]').empty();
+        for(var i in data)
+            renderItem(data[i]);
     };
 
-    var getConsumeWithTerm = function(start_date, end_date){
+    var consumeOnClick = function(store_name){
+        //modal test
+        $('#myModal').modal();
+        $(".modal-header #store_name").text( store_name);
+    };
+
+    var getConsumeWithTerm = function(start_date, end_date, inner_func){
         $.ajax({
             url : 'consume/' + start_date + '-' + end_date,
             method : 'GET',
             success : function(msg){
-                var msg_data = JSON.parse(msg);
-                $('div[id=consume_list]').empty();
-                for(var i in msg_data)
-                    renderItem(msg_data[i]);
+                inner_func(JSON.parse(msg));
             }
         });
+    };
+
+    var dateFormat = function(data, format){
+        /*
+            data : yyyy-mm-ddTHH:MM:SS
+        */
+        var year = data.substring(0, 4);
+        var month = data.substring(5, 7);
+        var date = data.substring(8, 10);
+        var hour = data.substring(11, 13);
+        var minute = data.substring(14, 16);
+        var second = data.substring(17, 19);
+
+        format = format.replace(/yyyy/gi, year);
+        format = format.replace(/mm/gi, month);
+        format = format.replace(/dd/gi, date);
+        format = format.replace(/HH/gi, hour);
+        format = format.replace(/MM/gi, minute);
+        format = format.replace(/SS/gi, second);
+        return format;
     };
 
     $(function(){
@@ -88,15 +113,15 @@
 
     <input type = "text" id = "from_date"> </input> ~ 
     <input type = "text" id = "to_date"> </input>
-    <input type = "button" id = "term_submit" value = "Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val())" />
+    <input type = "button" id = "term_submit" value = "Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
 
 
-    
+
     <div class="list-group" id = "consume_list">
     </div>
 
     <div id='consume_show_format' style='display:none;'>
-        <a href='javascript:consumeOnClick();' class='list-group-item'>
+        <a href='javascript:consumeOnClick("%store_name%");' class='list-group-item'>
             <B>
                 <div class="panel-group">
                     <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
@@ -120,14 +145,11 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Modal Header</h4>
+            <h1 class="modal-title" id='store_name'>
+            </h1>
           </div>
           <div class="modal-body">
-            <p>오늘의 명언</p>
-            <p>아: 아버지</p>
-            <p>나: 나를 낳으시고</p>
-            <p>바: 바지적삼</p>
-            <p>다: 다 적시셨네</p>
+            
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

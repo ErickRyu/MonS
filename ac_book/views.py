@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Consume, MyUser
 from django.utils import timezone
-from .forms import ConsumeForm, UserForm
+from .forms import ConsumeForm, UserForm, ConsumeCategoryForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from django.http import HttpResponse
@@ -55,8 +55,9 @@ def consume_create(request):
 			consume.save()
 			return redirect('consume_read', pk=consume.pk)
 	else:
-		form = ConsumeForm()
-	return render(request, 'ac_book/consume_update.html', {'form':form})
+		consume_form = ConsumeForm()
+		consume_category_form = ConsumeCategoryForm()
+	return render(request, 'ac_book/consume_update.html', {'form':consume_form, 'con_cate_form' : consume_category_form})
 
 @login_required
 def consume_update(request, pk):
@@ -69,8 +70,9 @@ def consume_update(request, pk):
 			consume.save()
 			return redirect('consume_read', pk=consume.pk)
 	else:
-		form = ConsumeForm(instance = consume)
-	return render(request, 'ac_book/consume_update.html', {'form':form})
+		consume_form = ConsumeForm(instance = consume)
+		consume_category_form = ConsumeCategoryForm()
+	return render(request, 'ac_book/consume_update.html', {'form':consume_form, 'con_cate_form' : consume_category_form})
 
 @login_required
 def consume_delete(request, pk):
@@ -113,6 +115,7 @@ def user_info(request):
 		#request user_info views
 		form = UserForm(instance = user)
 	return render(request, 'registration/user_info.html', {'form':form})
+
 def user_del(request):
 	user = get_object_or_404(MyUser, pk = request.user.pk)
 	user.delete()
