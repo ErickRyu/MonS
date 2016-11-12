@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Consume, MyUser
+from .models import Consume, MyUser, ConsumeCategory
 from django.utils import timezone
 from .forms import ConsumeForm, UserForm, ConsumeCategoryForm
 from django.contrib.auth.decorators import login_required
@@ -120,3 +120,10 @@ def user_del(request):
 	user = get_object_or_404(MyUser, pk = request.user.pk)
 	user.delete()
 	return redirect('/')
+
+def category_readAll(request):
+	user_category = get_object_or_404(User_ConCategory, user_id = request.user.pk)
+	print(user_category)
+	custom_category = get_object_or_404(ConsumeCategory, pk = user_category.category_id)
+	print(custom_category)
+	
