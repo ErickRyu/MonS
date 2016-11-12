@@ -3,8 +3,8 @@
 {% block content %}
 	<div class = "consume">
 		{% if user.is_authenticated %}
-			<a class="btn btn-default" href="{% url 'consume_edit' pk=consume.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-			<a class="btn btn-default" href="{% url 'consume_remove' pk=consume.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+			<a class="btn btn-default" href="{% url 'consume_update' pk=consume.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
+			<a class="btn btn-default" href="{% url 'consume_delete' pk=consume.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
 		{% endif %}
 		{% if consume.con_date %}
 			<div class = "date">

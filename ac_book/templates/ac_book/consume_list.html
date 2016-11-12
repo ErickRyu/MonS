@@ -1,15 +1,23 @@
 {% extends 'ac_book/base.html' %}
-
 {% block content %}
-    {% for consume in consumes %}
-        <div class="consume">
-            <div class="date">
-                {{ consume.con_date | date:"D d M Y" }}
-                
-        	</div>
-            <h1><a href="{% url 'consume_detail' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
-            <p>{{ consume.con_type }}</p>
-            <p>{{ consume.con_price }}</p>
-        </div>
-    {% endfor %}
+    <div class="list">
+        {% for consume in consumes|dictsort:"con_date"%}
+            {% ifchanged consume.con_date|date:"Ym" %}
+                <a href="{% url 'consume_monthly' term_id=consume.con_date|date:'Y-m' %}">
+                    {{ consume.con_date|date:"Y-m" }}
+                </a>&nbsp;&nbsp;
+            {% endifchanged %}
+        {% endfor %}
+
+        {% for consume in consumes %}
+            {% ifchanged consume.con_date|date:"d m Y" %}<hr>
+            <div class = "date">{{ consume.con_date | date:"D d M Y" }}</div>
+            {% endifchanged %}
+            <div class="consume">
+                <h1><a href="{% url 'consume_read' pk=consume.pk %}">{{ consume.store_name }}</a></h1>
+                <p>{{ consume.con_type }}</p>
+                <p>{{ consume.con_price }}</p>
+           </div>
+       {% endfor %}
+    </div>
 {% endblock content %}

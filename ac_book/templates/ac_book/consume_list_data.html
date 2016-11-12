@@ -1,0 +1,139 @@
+{% extends 'ac_book/base.html' %}
+{% block content %}
+    <script>
+    var getCookie = function(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+
+    var renderItem = function(data){
+        /*
+        input
+            {
+                pk: 41,
+                fields: {
+                    con_type: c1,
+                    store_name: s1,
+                    con_date: 2016 - 10 - 07 T08: 46: 38 Z,
+                    con_price: 1111,
+                    user: 16
+                }
+            }
+        */
+        var format = $('div[id=consume_show_format]').html();
+        format = format.replace(/%con_type%/gi, data.fields.con_type);
+        format = format.replace(/%consume_pk%/gi, data.pk);
+        format = format.replace(/%store_name%/gi, data.fields.store_name);
+        format = format.replace(/%con_price%/gi, data.fields.con_price);
+        format = format.replace(/%con_date%/gi, data.fields.con_date);
+
+        $('div[id=consume_list]').append(format);
+    };
+    var consumeOnClick = function(){
+        //modal test
+        $('#myModal').modal();
+    };
+
+    var getConsumeWithTerm = function(start_date, end_date){
+        $.ajax({
+            url : 'consume/' + start_date + '-' + end_date,
+            method : 'GET',
+            success : function(msg){
+                var msg_data = JSON.parse(msg);
+                $('div[id=consume_list]').empty();
+                for(var i in msg_data)
+                    renderItem(msg_data[i]);
+            }
+        });
+    };
+
+    $(function(){
+        var csrftoken = getCookie('csrftoken');
+        $.ajax({
+            url : '/consume/list/',
+            method : 'POST',
+            dataType: 'json',
+            beforeSend : function(xhr){
+                xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+            },
+            success : function(msg){
+                /*
+                render data into template
+                input
+                    {
+                        consumes : consume list
+                    }
+                */
+                var msg_data = JSON.parse(msg);
+                for(var i in msg_data){
+                    renderItem(msg_data[i]);
+                }
+            }
+        });
+    });
+
+    </script>
+
+
+    <input type = "text" id = "from_date"> </input> ~ 
+    <input type = "text" id = "to_date"> </input>
+    <input type = "button" id = "term_submit" value = "Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val())" />
+
+
+    
+    <div class="list-group" id = "consume_list">
+    </div>
+
+    <div id='consume_show_format' style='display:none;'>
+        <a href='javascript:consumeOnClick();' class='list-group-item'>
+            <B>
+                <div class="panel-group">
+                    <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
+                    <h1 class ='modal-title'>%store_name%</h1>
+                    </div>
+                    <div class='panel-body'>
+                        <p>%con_type%</p>
+                        <p>%con_date%</p>
+                        <p>%con_price%</p>
+                    </div>
+                </div>
+            </B>
+            <input type='hidden' id='consume_pk' value='%consume_pk%' />
+        </a>
+    </div>
+
+    <div id="myModal" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Modal Header</h4>
+          </div>
+          <div class="modal-body">
+            <p>오늘의 명언</p>
+            <p>아: 아버지</p>
+            <p>나: 나를 낳으시고</p>
+            <p>바: 바지적삼</p>
+            <p>다: 다 적시셨네</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+{% endblock content %}
