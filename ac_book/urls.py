@@ -18,15 +18,15 @@ urlpatterns = [
 	url(r'^consume/delete/(?P<pk>\d+)/$', views.consume_delete, name='consume_delete'),
 
 	#custom consume category R
-	url(r'^category/consume/readall/$', views.category_readAll, name='category_readAll'),
-	url(r'^category/consume/read/(?P<pk>\d+)/$', views.category_read, name='category_read'),
+	url(r'^category/consume/readall/$', views.category_consume_readAll, name='category_consume_readAll'),
+	# url(r'^category/consume/read/(?P<pk>\d+)/$', views.category_consume_read, name='category_consume_cread'),
 	# url(r'^category/create/$', views.category_create, name='category_create'),
 	# url(r'^category/update/(?P<pk>\d+)/$', views.category_update, name = 'category_update'),
 	# url(r'^category/delete/(?P<pk>\d+)/$', views.category_delete, name='category_delete'),
 
 	#custom social category R
-	url(r'^category/social/readall/$', views.category_readAll, name='category_readAll'),
-	url(r'^category/social/read/(?P<pk>\d+)/$', views.category_read, name='category_read'),
+	# url(r'^category/social/readall/$', views.category_readAll, name='category_readAll'),
+	# url(r'^category/social/read/(?P<pk>\d+)/$', views.category_read, name='category_read'),
 	# url(r'^category/create/$', views.category_create, name='category_create'),
 	# url(r'^category/update/(?P<pk>\d+)/$', views.category_update, name = 'category_update'),
 	# url(r'^category/delete/(?P<pk>\d+)/$', views.category_delete, name='category_delete'),

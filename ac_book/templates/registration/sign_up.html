@@ -5,7 +5,9 @@
     <form method="POST" class="user-form" id="submit_user_form">{% csrf_token %}
         {{ form.as_p }}
         <p><label for="id_password_check">Password(repeat):</label> <input id="id_password_check" name="password_check" type="password" required /></p>
-        <input type="submit" class="save btn btn-default" value="Save" />
+        <button type="submit" class="save btn" style='background-color:#a6a6a6;color:white;'>
+            Save
+        </button>
     </form>
     <script>
     	$('#submit_user_form').submit(function(){

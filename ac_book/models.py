@@ -119,5 +119,5 @@ class Con_ConCategory(models.Model):
 	category_id = models.ForeignKey(ConsumeCategory,on_delete=models.CASCADE)
 
 class User_ConCategory(models.Model):
-	category_id = models.ForeignKey(ConsumeCategory, on_delete=models.CASCADE)
-	user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+	category_id = models.ForeignKey(ConsumeCategory, on_delete=models.CASCADE,primary_key=False)
+	user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE, primary_key=False)

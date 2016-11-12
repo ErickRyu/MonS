@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Consume, MyUser, ConsumeCategory
+from .models import Consume, MyUser, ConsumeCategory, User_ConCategory
 from django.utils import timezone
 from .forms import ConsumeForm, UserForm, ConsumeCategoryForm
 from django.contrib.auth.decorators import login_required
@@ -121,9 +121,17 @@ def user_del(request):
 	user.delete()
 	return redirect('/')
 
-def category_readAll(request):
-	user_category = get_object_or_404(User_ConCategory, user_id = request.user.pk)
-	print(user_category)
-	custom_category = get_object_or_404(ConsumeCategory, pk = user_category.category_id)
-	print(custom_category)
-	
+def category_consume_readAll(request):
+   user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
+   print("\n\n[test]user category\n")
+   print(user_categorys)
+   custom_category = []
+
+   if user_categorys.exists() :
+      for user_category in user_categorys:
+         print("\n\n category_id is \n", user_category.category_id_id)
+         custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
+   
+   print("\n\n[test]custom category\n")
+   print(custom_category)
+   return render(request, 'ac_book/concategory_read_all.html', {'custom_category' : custom_category})
