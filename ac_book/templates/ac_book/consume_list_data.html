@@ -1,12 +1,12 @@
 {% extends 'ac_book/base.html' %}
 {% block content %}
-    <script>
-    var getCookie = function(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
+<script>
+var getCookie = function(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) === (name + '=')) {
                     cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -30,27 +30,35 @@
                     user: 16
                 }
             }
-        */
-        var format = $('div[id=consume_show_format]').html();
-        format = format.replace(/%con_type%/gi, data.fields.con_type);
-        format = format.replace(/%consume_pk%/gi, data.pk);
-        format = format.replace(/%store_name%/gi, data.fields.store_name);
-        format = format.replace(/%con_price%/gi, data.fields.con_price);
-        format = format.replace(/%con_date%/gi, dateFormat(data.fields.con_date, 'yyyy년 mm월 dd일, HH:MM'));
+            */
+            var format = $('div[id=consume_show_format]').html();
+            format = format.replace(/%con_type%/gi, data.fields.con_type);
+            format = format.replace(/%consume_pk%/gi, data.pk);
+            format = format.replace(/%store_name%/gi, data.fields.store_name);
+            format = format.replace(/%con_price%/gi, data.fields.con_price);
+            format = format.replace(/%con_date%/gi, dateFormat(data.fields.con_date, 'yyyy년 mm월 dd일, HH:MM'));
 
-        $('div[id=consume_list]').append(format);
-    };
 
-    var renderItems = function(data){
-        $('div[id=consume_list]').empty();
-        for(var i in data)
-            renderItem(data[i]);
-    };
+            $('div[id=consume_list]').append(format);
+        };
 
-    var consumeOnClick = function(store_name){
+        var renderItems = function(data){
+            $('div[id=consume_list]').empty();
+            for(var i in data)
+                renderItem(data[i]);
+        };
+
+        var consumeOnClick = function(store_name, ct, cd, cp, cpk){
         //modal test
-        $('#myModal').modal();
-        $(".modal-header #store_name").text( store_name);
+        //document.location = "/consume/update/" + pk + "/";
+        var modal_form = $('div[id=consume-modal-format]').html();
+        modal_form = modal_form.replace(/%store_name%/g, store_name);
+        modal_form = modal_form.replace(/%con_date%/g, cd);
+        modal_form = modal_form.replace(/%con_type%/g, ct);
+        modal_form = modal_form.replace(/%con_price%/g, cp);
+        modal_form = modal_form.replace(/%con_pk%/g, cpk);
+        // %con_category%
+        $('#myModal').html(modal_form).modal();
     };
 
     var getConsumeWithTerm = function(start_date, end_date, inner_func){
@@ -66,96 +74,131 @@
     var dateFormat = function(data, format){
         /*
             data : yyyy-mm-ddTHH:MM:SS
-        */
-        var year = data.substring(0, 4);
-        var month = data.substring(5, 7);
-        var date = data.substring(8, 10);
-        var hour = data.substring(11, 13);
-        var minute = data.substring(14, 16);
-        var second = data.substring(17, 19);
+            */
+            var year = data.substring(0, 4);
+            var month = data.substring(5, 7);
+            var date = data.substring(8, 10);
+            var hour = data.substring(11, 13);
+            var minute = data.substring(14, 16);
+            var second = data.substring(17, 19);
 
-        format = format.replace(/yyyy/gi, year);
-        format = format.replace(/mm/gi, month);
-        format = format.replace(/dd/gi, date);
-        format = format.replace(/HH/gi, hour);
-        format = format.replace(/MM/gi, minute);
-        format = format.replace(/SS/gi, second);
-        return format;
-    };
+            format = format.replace(/yyyy/gi, year);
+            format = format.replace(/mm/gi, month);
+            format = format.replace(/dd/gi, date);
+            format = format.replace(/HH/gi, hour);
+            format = format.replace(/MM/gi, minute);
+            format = format.replace(/SS/gi, second);
+            return format;
+        };
 
-    $(function(){
-        var csrftoken = getCookie('csrftoken');
-        $.ajax({
-            url : '/consume/list/',
-            method : 'POST',
-            dataType: 'json',
-            beforeSend : function(xhr){
-                xhr.setRequestHeader("X-CSRFToken", csrftoken); 
-            },
-            success : function(msg){
+        $(function(){
+            var csrftoken = getCookie('csrftoken');
+            $.ajax({
+                url : '/consume/list/',
+                method : 'POST',
+                dataType: 'json',
+                beforeSend : function(xhr){
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+                },
+                success : function(msg){
                 /*
                 render data into template
                 input
                     {
                         consumes : consume list
                     }
-                */
-                var msg_data = JSON.parse(msg);
-                for(var i in msg_data){
-                    renderItem(msg_data[i]);
+                    */
+                    var msg_data = JSON.parse(msg);
+                    for(var i in msg_data){
+                        renderItem(msg_data[i]);
+                    }
                 }
-            }
+            });
         });
-    });
 
-    </script>
-
-
-    <input type="text" id="from_date" placeholder='YYYYMM'> </input> ~ 
-    <input type="text" id="to_date" placeholder='YYYYMM'> </input>
-    <input class='btn btn-md' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
+        </script>
 
 
+        <input type="text" id="from_date" placeholder='YYYYMM'> </input> ~ 
+        <input type="text" id="to_date" placeholder='YYYYMM'> </input>
+        <input class='btn btn-md' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
 
-    <div class="list-group" id = "consume_list">
-    </div>
-
-    <div id='consume_show_format' style='display:none;'>
-        <a href='javascript:consumeOnClick("%store_name%");' class='list-group-item'>
-            <B>
-                <div class="panel-group">
-                    <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
-                    <h1 class ='modal-title'>%store_name%</h1>
-                    </div>
-                    <div class='panel-body'>
-                        <p>%con_type%</p>
-                        <p>%con_date%</p>
-                        <p>%con_price%</p>
-                    </div>
-                </div>
-            </B>
-            <input type='hidden' id='consume_pk' value='%consume_pk%' />
-        </a>
-    </div>
-
-    <div id="myModal" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h1 class="modal-title" id='store_name'>
-            </h1>
-          </div>
-          <div class="modal-body">
-            
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          </div>
+        <div class="list-group" id = "consume_list">
         </div>
 
-      </div>
+        <div id='consume_show_format' style='display:none;'>
+            <a href='javascript:consumeOnClick("%store_name%", "%con_type%", "%con_date%", "%con_price%", "%consume_pk%");' class='list-group-item'>
+                <B>
+                    <div class="panel-group">
+                        <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
+                            <h1 class ='modal-title'>%store_name%</h1>
+                        </div>
+                        <div class='panel-body'>
+                            <p>%con_type%</p>
+                            <p>%con_date%</p>
+                            <p>%con_price%</p>
+                        </div>
+                    </div>
+                </B>
+                <input type='hidden' id='consume_pk' value='%consume_pk%' />
+            </a>
+        </div>
+
+        <div id="myModal" class="modal fade" role="dialog">
+        </div>
+<div id='consume-modal-format' style='display:none;'>
+    <div class="modal-dialog">
+          <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h1 class="modal-title">
+                This is Title
+                </h1>
+            </div>
+            <div class="modal-body">
+                <form method="POST" class="consume-form" action="/consume/update/%con_pk%/">{% csrf_token %}
+                    <p>
+                        <label for="id_con_date">Con date:</label> 
+                        <input id="id_con_date" name="con_date" type="text" value="%con_date%" placeholder='YYYY-MM-DD hh:mm:ss' maxlength="100" required />
+                        <input id="initial-id_con_date" name="initial-con_date" type="hidden" value="%con_date%" />
+                    </p>
+                    <p>
+                        <label for="id_con_type">Con type:</label>
+                        <input id="id_con_type" maxlength="100" name="con_type" type="text" required value="%con_type%" />
+                    </p>
+                    <p>
+                        <label for="id_store_name">Store name:</label> 
+                        <input id="id_store_name" maxlength="100" name="store_name" type="text" required value="%store_name%"/>
+                    </p>
+                    <p>
+                        <label for="id_con_price">Con price:</label> 
+                        <input id="id_con_price" name="con_price" type="number" required value='%con_price%' />
+                    </p>
+                    <p>
+                        <label for='id_con_cate'>
+                            Consume Category
+                        </label>
+                      <!-- <select name='id_con_cate' class="form-control">
+                          
+                              <option class='list-group-item' value='1'>
+                                  cate1
+                              </option>
+                          
+                          
+                          </select> -->
+                      </p>
+                  </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-md" style='background-color:#a6a6a6;color:white;' onclick='javascript:$(this).parent().parent().find(".modal-body form").submit();'>
+                    Edit
+                </button>
+                <button type="button" class="btn btn-md" style='background-color:#a6a6a6;color:white;' data-dismiss="modal">
+                    Close
+                </button>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock content %}

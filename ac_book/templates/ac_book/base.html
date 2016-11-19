@@ -12,12 +12,14 @@
 	<body>
 		<div class="page-header" style='background-color:#000000;'>
 			{% if user.is_authenticated %}
-				<a href="{% url 'category_consume_readAll'%}"> 
-					readAllCategory 
-				</a>
 				<a href="{% url 'logout' %}"class = "top-menu">
 					<button class='btn btn-md' style='background-color:#a6a6a6;color:white;'>
 						Log-out
+					</button>
+				</a>
+				<a href="{% url 'category_consume_readAll'%}"  class="top-menu"> 
+					<button class='btn btn-md' style='background-color:#a6a6a6;color:white;'>
+						All Category 
 					</button>
 				</a>
 				<a href="{% url 'consume_create' %}" class="top-menu">

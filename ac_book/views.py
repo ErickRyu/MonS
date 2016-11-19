@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Consume, MyUser, ConsumeCategory, User_ConCategory
+from .models import Consume, MyUser, ConsumeCategory, User_ConCategory, Con_ConCategory
 from django.utils import timezone
 from .forms import ConsumeForm, UserForm, ConsumeCategoryForm
 from django.contrib.auth.decorators import login_required
@@ -52,27 +52,64 @@ def consume_create(request):
 		if form.is_valid():
 			consume = form.save(commit=False)
 			consume.user = request.user
+
 			consume.save()
+			Con_ConCategory.objects.create(consume_id_id=consume.pk, category_id_id=request.POST.get("id_con_cate",""))
 			return redirect('consume_read', pk=consume.pk)
 	else:
 		consume_form = ConsumeForm()
-		consume_category_form = ConsumeCategoryForm()
-	return render(request, 'ac_book/consume_update.html', {'form':consume_form, 'con_cate_form' : consume_category_form})
+		#read consume category from DB and send rendered page
+		user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
+		custom_category = []
+
+		if user_categorys.exists() :
+		   for user_category in user_categorys:
+		      custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
+		
+	return render(request, 'ac_book/consume_create.html', {'form':consume_form, 'con_cate_form' : custom_category})
 
 @login_required
 def consume_update(request, pk):
 	consume = get_object_or_404(Consume, pk = pk)
 	if request.method == "POST":
-		form = ConsumeForm(request.POST, instance = consume)
-		if form.is_valid():
-			consume = form.save(commit=False)
-			consume.user = request.user
-			consume.save()
-			return redirect('consume_read', pk=consume.pk)
-	else:
-		consume_form = ConsumeForm(instance = consume)
-		consume_category_form = ConsumeCategoryForm()
-	return render(request, 'ac_book/consume_update.html', {'form':consume_form, 'con_cate_form' : consume_category_form})
+		# form = ConsumeForm(request.POST, instance = consume)
+
+		# Need to check validation
+		# Need to render con_date
+		store_name = request.POST.get("store_name", "")
+		con_type = request.POST.get("con_type", "")
+		con_price = request.POST.get("con_price", "")
+		con_date = request.POST.get("con_date", "")
+		Consume.objects.filter(pk=pk).update(store_name=store_name, con_type = con_type, con_price=con_price)
+
+		# Consume.objects.update()
+		
+		# if form.is_valid():
+		# 	consume = form.save(commit=False)
+		# 	consume.user = request.user
+		# 	consume.save()
+
+		# 	Con_ConCategory.objects.create(consume_id_id=consume.pk, category_id_id=request.POST.get("id_con_cate",""))
+
+		# 	return redirect('consume_read', pk=consume.pk)
+
+	
+	# else:#method == "GET"
+
+	# 	print("GET is here")
+	# 	consume_form = ConsumeForm(instance = consume)
+
+	# 	#read consume category from DB and send rendered page
+	# 	user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
+	# 	custom_category = []
+
+	# 	if user_categorys.exists() :
+	# 	   for user_category in user_categorys:
+	# 	      custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
+		
+	# 	print(custom_category)
+	# return render(request, 'ac_book/consume_create.html', {'form':consume_form, 'con_cate_form' : custom_category})
+	return redirect('consume_read', pk=consume.pk)
 
 @login_required
 def consume_delete(request, pk):
