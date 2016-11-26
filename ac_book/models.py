@@ -19,9 +19,9 @@ class Consume(models.Model):
 	con_date = models.DateTimeField(default=timezone.now)
 	con_price = models.IntegerField()
 	user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-    )
+		settings.AUTH_USER_MODEL,
+		on_delete=models.CASCADE,
+	)
 	# user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -102,3 +102,22 @@ class MyUser(AbstractBaseUser):
 		"Is the user a member of staff?"
 		# Simplest possible answer: All admins are staff
 		return self.is_admin
+
+class Category(models.Model):
+	category_name = models.CharField(default="Unknown", unique=True, max_length=100)
+	class Meta:
+		abstract = True
+
+class ConsumeCategory(Category):{}
+class SocialCategory(Category):{}
+
+class Con_ConCategory(models.Model):
+	consume_id = models.ForeignKey(
+		Consume,
+		on_delete=models.CASCADE
+	)
+	category_id = models.ForeignKey(ConsumeCategory,on_delete=models.CASCADE)
+
+class User_ConCategory(models.Model):
+	category_id = models.ForeignKey(ConsumeCategory, on_delete=models.CASCADE,primary_key=False)
+	user_id = models.ForeignKey(MyUser, on_delete=models.CASCADE, primary_key=False)

@@ -1,0 +1,21 @@
+{% extends 'ac_book/base.html' %}
+
+{% block content %}
+    <h1>New Consume</h1>
+    <form method="POST" class="consume-form">{% csrf_token %}
+        {{ form.as_p }}
+        <label for='id_con_cate'>
+            Consume Category
+        </label>
+        <select name='id_con_cate' class="form-control">
+            {% for category in con_cate_form %}
+                <option class='list-group-item' value='{{category.pk}}'>
+                    {{category.category_name}}
+                </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="save btn" style='background-color:#a6a6a6;color:white;'>
+        	Save
+        </button>
+    </form>
+{% endblock %}

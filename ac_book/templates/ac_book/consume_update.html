@@ -1,9 +1,0 @@
-{% extends 'ac_book/base.html' %}
-
-{% block content %}
-    <h1>New Consume</h1>
-    <form method="POST" class="consume-form">{% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
-    </form>
-{% endblock %}

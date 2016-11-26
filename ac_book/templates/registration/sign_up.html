@@ -1,20 +1,20 @@
 {% extends 'ac_book/base.html' %}
 
-{% block content %}
+{% block content_unlogined %}
     <h1>Sign up</h1>
     <form method="POST" class="user-form" id="submit_user_form">{% csrf_token %}
         {{ form.as_p }}
         <p><label for="id_password_check">Password(repeat):</label> <input id="id_password_check" name="password_check" type="password" required /></p>
-        <input type="submit" class="save btn btn-default" value="Save" />
+        <button type="submit" class="save btn" style='background-color:#a6a6a6;color:white;'>
+            Save
+        </button>
     </form>
     <script>
     	$('#submit_user_form').submit(function(){
     		//check password validation
     		if($('#id_password').val() != $('#id_password_check').val()){
-    			alert("canceled");
     			return false;
     		}
-    		alert("submit");
     	});
     </script>
 {% endblock %}
