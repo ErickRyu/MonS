@@ -1,4 +1,4 @@
-ac_book/igrations/
+ac_book/migrations/
 myvenv/
 *.pyc
 __pycache__
