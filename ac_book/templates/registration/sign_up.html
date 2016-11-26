@@ -1,6 +1,6 @@
 {% extends 'ac_book/base.html' %}
 
-{% block content %}
+{% block content_unlogined %}
     <h1>Sign up</h1>
     <form method="POST" class="user-form" id="submit_user_form">{% csrf_token %}
         {{ form.as_p }}
@@ -13,10 +13,8 @@
     	$('#submit_user_form').submit(function(){
     		//check password validation
     		if($('#id_password').val() != $('#id_password_check').val()){
-    			alert("canceled");
     			return false;
     		}
-    		alert("submit");
     	});
     </script>
 {% endblock %}

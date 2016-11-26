@@ -51,8 +51,13 @@
 		<div class="content container">
 		    <div class="row">
 		        <div class="col-md-8">
-					{% block content %}
-            		{% endblock %}
+		        	{% if user.is_authenticated %}
+						{% block content %}
+	            		{% endblock %}
+            		{% else %}
+            			{% block content_unlogined %}
+            			{% endblock %}
+        			{% endif %}
 		        </div>
 		    </div>
 		</div>

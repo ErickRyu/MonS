@@ -1,3 +1,4 @@
+from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Consume, MyUser, ConsumeCategory, User_ConCategory, Con_ConCategory
 from django.utils import timezone
@@ -16,15 +17,34 @@ def consume_list(request):
 	# logged_in_user = request.user
 	# consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
 	# return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
-	return render(request, 'ac_book/consume_list_data.html')
+	user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
+	custom_category = []
+
+	if user_categorys.exists() :
+	   for user_category in user_categorys:
+	      custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
+
+	return render(request, 'ac_book/consume_list_data.html', {'categorys':custom_category})
 
 # data 뿌리는 놈
 def consume_list_data(request):
 	logged_in_user = request.user
-	consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
-
-	con_obj = serializers.serialize('json', consumes)
-	return HttpResponse(json.dumps(con_obj), content_type = "application/json")
+	consumes_dic_list = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
+	sendArr = []
+	for consume_dict in consumes_dic_list:
+		con_cate = Con_ConCategory.objects.filter(consume_id=consume_dict.pk)[0]
+		category_name = ConsumeCategory.objects.filter(pk = con_cate.category_id_id)[0].category_name
+		sendArr.append({
+			'id' : consume_dict.pk,
+			'category_id' : con_cate.category_id_id,
+			'category_name' : category_name,
+			'store_name' : consume_dict.store_name,
+			'con_price' : consume_dict.con_price,
+			'con_date' : consume_dict.con_date.strftime('%Y-%m-%dT%H:%M'),
+			'con_type' : consume_dict.con_type,
+			'user_id' : consume_dict.user_id
+		})
+	return HttpResponse(json.dumps(sendArr), content_type = "application/json")
 
 
 def consume_term(request, date_from, date_to):
@@ -36,14 +56,19 @@ def consume_term(request, date_from, date_to):
 	to_year = date_to[:4]
 	to_month = date_to[4:6]
 	consumes = Consume.objects.filter(con_date__year__lte=to_year, con_date__month__lte=to_month,  con_date__year__gte= from_year, con_date__month__gte=from_month, user_id=logged_in_user.id).order_by('-con_date')
-	
+
 	con_obj = serializers.serialize('json', consumes)
 	return HttpResponse(json.dumps(con_obj), content_type = "application/json")
 
 
 def consume_read(request, pk):
 	consume = get_object_or_404(Consume, pk=pk)
-	return render(request, 'ac_book/consume_read.html', {'consume':consume})
+
+	con_cate = Con_ConCategory.objects.filter(consume_id=pk)[0]
+	category_name = ConsumeCategory.objects.filter(pk = con_cate.category_id_id)[0].category_name
+
+	
+	return render(request, 'ac_book/consume_read.html', {'consume':consume, 'category_name' : category_name})
 
 @login_required
 def consume_create(request):
@@ -72,43 +97,16 @@ def consume_create(request):
 def consume_update(request, pk):
 	consume = get_object_or_404(Consume, pk = pk)
 	if request.method == "POST":
-		# form = ConsumeForm(request.POST, instance = consume)
-
 		# Need to check validation
 		# Need to render con_date
 		store_name = request.POST.get("store_name", "")
 		con_type = request.POST.get("con_type", "")
 		con_price = request.POST.get("con_price", "")
 		con_date = request.POST.get("con_date", "")
+		category_id = request.POST.get("id_con_cate", "")		
 		Consume.objects.filter(pk=pk).update(store_name=store_name, con_type = con_type, con_price=con_price)
 
-		# Consume.objects.update()
-		
-		# if form.is_valid():
-		# 	consume = form.save(commit=False)
-		# 	consume.user = request.user
-		# 	consume.save()
-
-		# 	Con_ConCategory.objects.create(consume_id_id=consume.pk, category_id_id=request.POST.get("id_con_cate",""))
-
-		# 	return redirect('consume_read', pk=consume.pk)
-
-	
-	# else:#method == "GET"
-
-	# 	print("GET is here")
-	# 	consume_form = ConsumeForm(instance = consume)
-
-	# 	#read consume category from DB and send rendered page
-	# 	user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
-	# 	custom_category = []
-
-	# 	if user_categorys.exists() :
-	# 	   for user_category in user_categorys:
-	# 	      custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
-		
-	# 	print(custom_category)
-	# return render(request, 'ac_book/consume_create.html', {'form':consume_form, 'con_cate_form' : custom_category})
+		get_obj = Con_ConCategory.objects.filter(consume_id=pk).update(category_id_id=category_id)
 	return redirect('consume_read', pk=consume.pk)
 
 @login_required
@@ -131,7 +129,6 @@ def sign_up(request):
 				email = my_user.email
 				date_of_birth = my_user.date_of_birth
 				password = my_user.password
-				print("pasword = " + password)
 				user = MyUser.objects.create_user(email, date_of_birth, password)			
 				user.save()
 				return redirect('/')
@@ -160,15 +157,10 @@ def user_del(request):
 
 def category_consume_readAll(request):
    user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
-   print("\n\n[test]user category\n")
-   print(user_categorys)
    custom_category = []
 
    if user_categorys.exists() :
       for user_category in user_categorys:
-         print("\n\n category_id is \n", user_category.category_id_id)
          custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
    
-   print("\n\n[test]custom category\n")
-   print(custom_category)
    return render(request, 'ac_book/concategory_read_all.html', {'custom_category' : custom_category})

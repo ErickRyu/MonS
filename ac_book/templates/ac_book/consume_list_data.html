@@ -1,6 +1,9 @@
 {% extends 'ac_book/base.html' %}
 {% block content %}
 <script>
+var categories = new Array();
+
+
 var getCookie = function(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -31,13 +34,16 @@ var getCookie = function(name) {
                 }
             }
             */
+            console.log('at renderItem');
+            console.log(JSON.stringify(data));
             var format = $('div[id=consume_show_format]').html();
-            format = format.replace(/%con_type%/gi, data.fields.con_type);
-            format = format.replace(/%consume_pk%/gi, data.pk);
-            format = format.replace(/%store_name%/gi, data.fields.store_name);
-            format = format.replace(/%con_price%/gi, data.fields.con_price);
-            format = format.replace(/%con_date%/gi, dateFormat(data.fields.con_date, 'yyyy년 mm월 dd일, HH:MM'));
-
+            format = format.replace(/%con_type%/gi, data.con_type);
+            format = format.replace(/%consume_pk%/gi, data.id);
+            format = format.replace(/%store_name%/gi, data.store_name);
+            format = format.replace(/%con_price%/gi, data.con_price);
+            format = format.replace(/%con_date%/gi, dateFormat(data.con_date, 'yyyy년 mm월 dd일, HH:MM'));
+            format = format.replace(/%category_id%/g, data.category_id);
+            format = format.replace(/%category_name%/g, data.category_name);
 
             $('div[id=consume_list]').append(format);
         };
@@ -48,7 +54,7 @@ var getCookie = function(name) {
                 renderItem(data[i]);
         };
 
-        var consumeOnClick = function(store_name, ct, cd, cp, cpk){
+        var consumeOnClick = function(store_name, ct, cd, cp, cpk, ctg_id){
         //modal test
         //document.location = "/consume/update/" + pk + "/";
         var modal_form = $('div[id=consume-modal-format]').html();
@@ -58,7 +64,8 @@ var getCookie = function(name) {
         modal_form = modal_form.replace(/%con_price%/g, cp);
         modal_form = modal_form.replace(/%con_pk%/g, cpk);
         // %con_category%
-        $('#myModal').html(modal_form).modal();
+        var modal = $('#myModal').html(modal_form).modal();
+        modal.find('option[value=' + ctg_id + ']').attr('selected', 'selected');
     };
 
     var getConsumeWithTerm = function(start_date, end_date, inner_func){
@@ -93,12 +100,15 @@ var getCookie = function(name) {
 
         $(function(){
             var csrftoken = getCookie('csrftoken');
+
             $.ajax({
+
                 url : '/consume/list/',
                 method : 'POST',
                 dataType: 'json',
                 beforeSend : function(xhr){
                     xhr.setRequestHeader("X-CSRFToken", csrftoken); 
+
                 },
                 success : function(msg){
                 /*
@@ -108,10 +118,13 @@ var getCookie = function(name) {
                         consumes : consume list
                     }
                     */
-                    var msg_data = JSON.parse(msg);
-                    for(var i in msg_data){
-                        renderItem(msg_data[i]);
+                    //var msg_data = JSON.parse(msg);
+                    for(var i in msg){
+                        renderItem(msg[i]);
                     }
+                },
+                error : function(err){
+                    console.log(JSON.stringify(err))
                 }
             });
         });
@@ -127,7 +140,7 @@ var getCookie = function(name) {
         </div>
 
         <div id='consume_show_format' style='display:none;'>
-            <a href='javascript:consumeOnClick("%store_name%", "%con_type%", "%con_date%", "%con_price%", "%consume_pk%");' class='list-group-item'>
+            <a href='javascript:consumeOnClick("%store_name%", "%con_type%", "%con_date%", "%con_price%", "%consume_pk%", "%category_id%");' class='list-group-item'>
                 <B>
                     <div class="panel-group">
                         <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
@@ -137,6 +150,7 @@ var getCookie = function(name) {
                             <p>%con_type%</p>
                             <p>%con_date%</p>
                             <p>%con_price%</p>
+                            <p>%category_name%</p>
                         </div>
                     </div>
                 </B>
@@ -160,7 +174,7 @@ var getCookie = function(name) {
                 <form method="POST" class="consume-form" action="/consume/update/%con_pk%/">{% csrf_token %}
                     <p>
                         <label for="id_con_date">Con date:</label> 
-                        <input id="id_con_date" name="con_date" type="text" value="%con_date%" placeholder='YYYY-MM-DD hh:mm:ss' maxlength="100" required />
+                        <input id="id_con_date" name="con_date" type="text" value="%con_date%" placeholder='YYYY-MM-DD hh:mm:ss' maxlength="100" required disabled />
                         <input id="initial-id_con_date" name="initial-con_date" type="hidden" value="%con_date%" />
                     </p>
                     <p>
@@ -173,20 +187,19 @@ var getCookie = function(name) {
                     </p>
                     <p>
                         <label for="id_con_price">Con price:</label> 
-                        <input id="id_con_price" name="con_price" type="number" required value='%con_price%' />
+                        <input id="id_con_price" name="con_price" type="text" required value='%con_price%' />
                     </p>
                     <p>
                         <label for='id_con_cate'>
                             Consume Category
                         </label>
-                      <!-- <select name='id_con_cate' class="form-control">
-                          
-                              <option class='list-group-item' value='1'>
-                                  cate1
-                              </option>
-                          
-                          
-                          </select> -->
+                        <select name='id_con_cate' class="form-control">
+                            {% for category in categorys %}    
+                            <option class='list-group-item' value='{{ category.id }}'>
+                                {{ category.category_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
                       </p>
                   </form>
             </div>
