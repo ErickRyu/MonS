@@ -1,6 +1,6 @@
 from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Consume, MyUser, ConsumeCategory, User_ConCategory, Con_ConCategory
+from .models import Consume, MyUser, ConsumeCategory, User_ConCategory, Con_ConCategory, User_SoCategory, SocialCategory
 from django.utils import timezone
 from .forms import ConsumeForm, UserForm, ConsumeCategoryForm
 from django.contrib.auth.decorators import login_required
@@ -18,13 +18,19 @@ def consume_list(request):
 	# consumes = Consume.objects.filter(user_id=logged_in_user.id).order_by('-con_date')
 	# return render(request, 'ac_book/consume_list.html', {'consumes':consumes})
 	user_categorys = User_ConCategory.objects.filter(user_id = request.user.pk)
+	user_categorys1 = User_SoCategory.objects.filter(user_id=request.user.pk)
 	custom_category = []
+	social_category = []
 
 	if user_categorys.exists() :
-	   for user_category in user_categorys:
-	      custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
+		for user_category in user_categorys:
+			custom_category.append(get_object_or_404(ConsumeCategory, pk = user_category.category_id_id))
 
-	return render(request, 'ac_book/consume_list_data.html', {'categorys':custom_category})
+	if user_categorys1.exists() :
+		for user_category1 in user_categorys1:
+			social_category.append(get_object_or_404(SocialCategory, pk=user_category1.category_id_id))
+
+	return render(request, 'ac_book/consume_list_data.html', {'con_categorys':custom_category, 'so_categorys':social_category})
 
 # data 뿌리는 놈
 def consume_list_data(request):
