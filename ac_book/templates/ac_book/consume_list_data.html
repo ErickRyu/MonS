@@ -132,7 +132,7 @@ var getCookie = function(name) {
             });
         });
 
-        var onClickCate = function(){
+        var onChangeCate = function(){
             if(!consumes)
                 return;
             var searched_consumes = [];
@@ -155,9 +155,9 @@ var getCookie = function(name) {
 
         <input type="text" id="from_date" placeholder='YYYYMM'> </input> ~ 
         <input type="text" id="to_date" placeholder='YYYYMM'> </input>
-        <input class='btn btn-md' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
+        <input class='btn btn-sm' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
 
-        <select class='list-group' id='category_id'>
+        <select class='list-group' id='category_id' onchange='javascript:onChangeCate();'>
             <option class='list-group-item' value='-1'>
                 show All
             </option>
@@ -167,9 +167,6 @@ var getCookie = function(name) {
                 </option>
             {% endfor %}
         </select>
-        <button type='button' onclick='javascript:onClickCate();' class='btn btn-sm btn-default'>
-            category
-        </button>
 
         <div class="list-group" id = "consume_list">
         </div>
