@@ -46,29 +46,6 @@ def consume_list_data(request):
 		})
 	return HttpResponse(json.dumps(sendArr), content_type = "application/json")
 
-
-def consume_read_by_concate(request, pk):
-	logged_in_user = request.user
-	# Should change 2 to pk
-	con_concates = Con_ConCategory.objects.filter(category_id_id=pk)
-	category_name = ConsumeCategory.objects.filter(pk = pk)[0].category_name
-
-	sendArr = []
-	for con_concate in con_concates:
-		consume = Consume.objects.filter(pk = con_concate.consume_id_id, user_id=logged_in_user.id).order_by('-con_date')[0]
-		sendArr.append({
-			'id' : consume.pk,
-			'category_id' : pk,
-			'category_name' : category_name,
-			'store_name' : consume.store_name,
-			'con_price' : consume.con_price,
-			'con_date' : consume.con_date.strftime('%Y-%m-%dT%H:%M'),
-			'con_type' : consume.con_type,
-			'user_id' : consume.user_id
-		})
-
-	return HttpResponse(json.dumps(sendArr), content_type = "application/json")
-
 def consume_term(request, date_from, date_to):
 	logged_in_user = request.user
 	# python filter  첫 날짜, 끝 날짜를 찾아주는것이 있을 것이다.
