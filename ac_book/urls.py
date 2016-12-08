@@ -17,6 +17,17 @@ urlpatterns = [
 	url(r'^consume/update/(?P<pk>\d+)/$', views.consume_update, name = 'consume_update'),
 	url(r'^consume/delete/(?P<pk>\d+)/$', views.consume_delete, name='consume_delete'),
 
+	url(r'^consume/(?P<date_from>[0-9]{4}[0-9]{2})-(?P<date_to>[0-9]{4}[0-9]{2})/concate$', views.consume_term, name='consume_term'),
+	# consume read by concate
+	url(r'^consume/read/concate/(?P<pk>\d+)/$', views.consume_read_by_concate, name='consume_read_by_concate'),
+	# consume read by concate+term
+
+	
+	# consume read by socate
+	# consume read by concate+term
+
+
+
 	#custom consume category R
 	url(r'^category/consume/readall/$', views.category_consume_readAll, name='category_consume_readAll'),
 	# url(r'^category/consume/read/(?P<pk>\d+)/$', views.category_consume_read, name='category_consume_cread'),

@@ -34,8 +34,8 @@ var getCookie = function(name) {
                 }
             }
             */
-            console.log('at renderItem');
-            console.log(JSON.stringify(data));
+            //console.log('at renderItem');
+            //console.log(JSON.stringify(data));
             var format = $('div[id=consume_show_format]').html();
             format = format.replace(/%con_type%/gi, data.con_type);
             format = format.replace(/%consume_pk%/gi, data.id);
@@ -72,8 +72,10 @@ var getCookie = function(name) {
         $.ajax({
             url : 'consume/' + start_date + '-' + end_date,
             method : 'GET',
+            dataType:'json',
             success : function(msg){
-                inner_func(JSON.parse(msg));
+                consumes = msg;
+                inner_func(msg);
             }
         });
     };
@@ -98,11 +100,11 @@ var getCookie = function(name) {
             return format;
         };
 
+        var consumes;
         $(function(){
             var csrftoken = getCookie('csrftoken');
 
             $.ajax({
-
                 url : '/consume/list/',
                 method : 'POST',
                 dataType: 'json',
@@ -119,15 +121,34 @@ var getCookie = function(name) {
                     }
                     */
                     //var msg_data = JSON.parse(msg);
+                    consumes = msg;
                     for(var i in msg){
                         renderItem(msg[i]);
                     }
                 },
                 error : function(err){
-                    console.log(JSON.stringify(err))
+                    console.log(err);
                 }
             });
         });
+
+        var onClickCate = function(){
+            if(!consumes)
+                return;
+            var searched_consumes = [];
+            var target_cate_id = $('select#category_id option:selected').val();
+            if(target_cate_id == '-1'){
+                renderItems(consumes);
+                return;
+            }
+
+            for(var i in consumes){
+                if(consumes[i].category_id == target_cate_id){
+                    searched_consumes.push(consumes[i]);
+                }
+            }
+            renderItems(searched_consumes);
+        };
 
         </script>
 
@@ -135,6 +156,20 @@ var getCookie = function(name) {
         <input type="text" id="from_date" placeholder='YYYYMM'> </input> ~ 
         <input type="text" id="to_date" placeholder='YYYYMM'> </input>
         <input class='btn btn-md' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
+
+        <select class='list-group' id='category_id'>
+            <option class='list-group-item' value='-1'>
+                show All
+            </option>
+            {% for category in categorys %}
+                <option class='list-group-item' value='{{ category.pk }}'>
+                    {{ category.category_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <button type='button' onclick='javascript:onClickCate();' class='btn btn-sm btn-default'>
+            category
+        </button>
 
         <div class="list-group" id = "consume_list">
         </div>
