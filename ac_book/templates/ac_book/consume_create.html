@@ -8,12 +8,29 @@
             Consume Category
         </label>
         <select name='id_con_cate' class="form-control">
+            <option class='list-group-item' value='-1'>
+                (None)
+            </option>
             {% for category in con_cate_form %}
                 <option class='list-group-item' value='{{category.pk}}'>
                     {{category.category_name}}
                 </option>
             {% endfor %}
         </select>
+        <label for='id_so_cate'>
+            Social Category
+        </label>
+        <select name='id_so_cate' class='form-control'>
+            <option class='list-group-item' value='-1'>
+                (None)
+            </option>
+            {% for category in so_cate_form %}
+                <option class='list-group-item' value='{{ category.pk }}'>
+                    {{category.category_name}}
+                </option>
+            {% endfor %}
+        </select>
+        <br>
         <button type="submit" class="save btn" style='background-color:#a6a6a6;color:white;'>
         	Save
         </button>

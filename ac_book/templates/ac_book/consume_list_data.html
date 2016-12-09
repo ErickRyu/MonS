@@ -23,38 +23,39 @@ var getCookie = function(name) {
     var renderItem = function(data){
         /*
         input
-            {
-                pk: 41,
-                fields: {
-                    con_type: c1,
-                    store_name: s1,
-                    con_date: 2016 - 10 - 07 T08: 46: 38 Z,
-                    con_price: 1111,
-                    user: 16
-                }
+        {
+            pk: 41,
+            fields: {
+                con_type: c1,
+                store_name: s1,
+                con_date: 2016 - 10 - 07 T08: 46: 38 Z,
+                con_price: 1111,
+                user: 16
             }
-            */
-            console.log('at renderItem');
-            console.log(JSON.stringify(data));
-            var format = $('div[id=consume_show_format]').html();
-            format = format.replace(/%con_type%/gi, data.con_type);
-            format = format.replace(/%consume_pk%/gi, data.id);
-            format = format.replace(/%store_name%/gi, data.store_name);
-            format = format.replace(/%con_price%/gi, data.con_price);
-            format = format.replace(/%con_date%/gi, dateFormat(data.con_date, 'yyyy년 mm월 dd일, HH:MM'));
-            format = format.replace(/%category_id%/g, data.category_id);
-            format = format.replace(/%category_name%/g, data.category_name);
+        }
+        */
+        //console.log('at renderItem');
+        //console.log(JSON.stringify(data));
+        var format = $('div[id=consume_show_format]').html();
+        format = format.replace(/%con_type%/gi, data.con_type);
+        format = format.replace(/%consume_pk%/gi, data.id);
+        format = format.replace(/%store_name%/gi, data.store_name);
+        format = format.replace(/%con_price%/gi, data.con_price);
+        format = format.replace(/%con_date%/gi, dateFormat(data.con_date, 'yyyy년 mm월 dd일, HH:MM'));
+        format = format.replace(/%category_id%/g, data.category_id);
+        format = format.replace(/%category_name%/g, data.category_name);
+        format = format.replace(/%so_category_name%/g, data.so_category_name);
+        format = format.replace(/%so_category_id%/g, data.so_category_id);
+        $('div[id=consume_list]').append(format);
+    };
 
-            $('div[id=consume_list]').append(format);
-        };
+    var renderItems = function(data){
+        $('div[id=consume_list]').empty();
+        for(var i in data)
+            renderItem(data[i]);
+    };
 
-        var renderItems = function(data){
-            $('div[id=consume_list]').empty();
-            for(var i in data)
-                renderItem(data[i]);
-        };
-
-        var consumeOnClick = function(store_name, ct, cd, cp, cpk, ctg_id){
+    var consumeOnClick = function(store_name, ct, cd, cp, cpk, ctg_id, sctg_id){
         //modal test
         //document.location = "/consume/update/" + pk + "/";
         var modal_form = $('div[id=consume-modal-format]').html();
@@ -65,15 +66,19 @@ var getCookie = function(name) {
         modal_form = modal_form.replace(/%con_pk%/g, cpk);
         // %con_category%
         var modal = $('#myModal').html(modal_form).modal();
-        modal.find('option[value=' + ctg_id + ']').attr('selected', 'selected');
+        modal.find('select[name=id_con_cate] option[value=' + ctg_id + ']').attr('selected', 'selected');
+        console.log(sctg_id);
+        modal.find('select[name=id_soc_cate] option[value=' + sctg_id + ']').attr('selected', 'selected');
     };
 
     var getConsumeWithTerm = function(start_date, end_date, inner_func){
         $.ajax({
             url : 'consume/' + start_date + '-' + end_date,
             method : 'GET',
+            dataType:'json',
             success : function(msg){
-                inner_func(JSON.parse(msg));
+                consumes = msg;
+                inner_func(msg);
             }
         });
     };
@@ -98,17 +103,16 @@ var getCookie = function(name) {
             return format;
         };
 
+        var consumes;
         $(function(){
             var csrftoken = getCookie('csrftoken');
 
             $.ajax({
-
                 url : '/consume/list/',
                 method : 'POST',
                 dataType: 'json',
                 beforeSend : function(xhr){
                     xhr.setRequestHeader("X-CSRFToken", csrftoken); 
-
                 },
                 success : function(msg){
                 /*
@@ -119,28 +123,76 @@ var getCookie = function(name) {
                     }
                     */
                     //var msg_data = JSON.parse(msg);
+                    consumes = msg;
                     for(var i in msg){
                         renderItem(msg[i]);
                     }
                 },
                 error : function(err){
-                    console.log(JSON.stringify(err))
+                    console.log(err);
                 }
             });
         });
 
+        var onChangeCate = function(){
+            if(!consumes)
+                return;
+            var searched_consumes = [];
+            var target_cate_id = $('select#category_id option:selected').val();
+            var target_so_cate_id = $('select#socategory_id option:selected').val();
+            if(target_cate_id == -1 && target_so_cate_id == -1){
+                renderItems(consumes);
+                return;
+            }
+
+            for(var i in consumes){
+                if(consumes[i].category_id == target_cate_id && consumes[i].so_category_id == target_so_cate_id){
+                    searched_consumes.push(consumes[i]);
+                }
+            }
+            renderItems(searched_consumes);
+        };
+        
         </script>
 
 
         <input type="text" id="from_date" placeholder='YYYYMM'> </input> ~ 
         <input type="text" id="to_date" placeholder='YYYYMM'> </input>
-        <input class='btn btn-md' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
+        <input class='btn btn-sm' style='background-color:#a6a6a6;color:white;' type="button" id="term_submit" value="Find it!" onclick="javascript:getConsumeWithTerm($('#from_date').val(), $('#to_date').val(), renderItems)" />
+
+        <br>
+        <label for='category_id'>
+            Consume Category
+        </label>
+        <select class='list-group' id='category_id' name='category_id' onchange='javascript:onChangeCate();'>
+            <option class='list-group-item' value='-1'>
+                show All
+            </option>
+            {% for category in con_categorys %}
+                <option class='list-group-item' value='{{ category.pk }}'>
+                    {{ category.category_name }}
+                </option>
+            {% endfor %}
+        </select>
+        <label for='socategory_id'>
+            Social Category
+        </label>
+        <select class='list-group' id='socategory_id'  onchange='javascript:onChangeCate();'>
+            <option class='list-group-item' value='-1'>
+                show All
+            </option>
+            {% for category in so_categorys %}
+                <option class='list-group-item' value='{{ category.pk }}'>
+                    {{ category.category_name }}
+                </option>
+            {% endfor %}
+        </select>
 
         <div class="list-group" id = "consume_list">
         </div>
 
         <div id='consume_show_format' style='display:none;'>
-            <a href='javascript:consumeOnClick("%store_name%", "%con_type%", "%con_date%", "%con_price%", "%consume_pk%", "%category_id%");' class='list-group-item'>
+            <a href='javascript:consumeOnClick("%store_name%", "%con_type%", "%con_date%", "%con_price%", "%consume_pk%", "%category_id%", "%so_category_id%");' class='list-group-item'>
                 <B>
                     <div class="panel-group">
                         <div class='panel-heading' style='background-color:#b3b3b3;color:white;'>
@@ -151,6 +203,8 @@ var getCookie = function(name) {
                             <p>%con_date%</p>
                             <p>%con_price%</p>
                             <p>%category_name%</p>
+                            <p>%so_category_name%</p>
+
                         </div>
                     </div>
                 </B>
@@ -194,10 +248,26 @@ var getCookie = function(name) {
                             Consume Category
                         </label>
                         <select name='id_con_cate' class="form-control">
-                            {% for category in categorys %}    
-                            <option class='list-group-item' value='{{ category.id }}'>
+                            <option class='list-group-item' value='-1'>
+                                (None)
+                            </option>
+                            {% for category in con_categorys %}    
+                            <option class='list-group-item' value='{{ category.pk }}'>
                                 {{ category.category_name }}
                             </option>
+                            {% endfor %}
+                        </select>
+                        <label for='id_soc_cate'>
+                            Social Category
+                        </label>
+                        <select name='id_soc_cate' class='form-control'>
+                            <option class='list-group-item' value='-1'>
+                                (None)
+                            </option>
+                            {% for category in so_categorys %}
+                                <option class='list-group-item' value='{{ category.pk }}'>
+                                    {{ category.category_name }}
+                                </option>
                             {% endfor %}
                         </select>
                       </p>
